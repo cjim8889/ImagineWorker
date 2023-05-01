@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
+ARG BASE_IMAGE=huggingface/transformers-pytorch-gpu:4.28.1
 FROM ${BASE_IMAGE} as dev-base
 
 SHELL ["/bin/bash", "-c"]
@@ -12,18 +12,18 @@ COPY . /app
 WORKDIR /app
 
 # Install required Python packages
-RUN python -m pip install --upgrade pip && \
-    pip install -r requirements.txt
+RUN python3 -m pip install --upgrade pip && \
+    pip3 install -r requirements.txt
 
 # Set the working directory
 WORKDIR /app/app/components/CodeFormer
 
-RUN pip install -r requirements.txt && \
-    python basicsr/setup.py develop
+RUN pip3 install -r requirements.txt && \
+    python3 basicsr/setup.py develop
 
 WORKDIR /app/app
 
-RUN python setup.py
+RUN python3 setup.py
 
 # Set the entry point
-ENTRYPOINT ["python", "-u", "main.py"]
+ENTRYPOINT ["python3", "-u", "main.py"]
