@@ -4,7 +4,7 @@ current_file_directory = os.path.dirname(current_file_path)
 from .codeformer import setup_codeformer, codeformer_inference
 from app.jobs import BaseJob
 from app.logger import logger
-from diffusers import DiffusionPipeline
+from diffusers import DiffusionPipeline, DPMSolverMultistepScheduler
 from typing import Tuple
 from PIL import Image
 import numpy as np
@@ -34,6 +34,10 @@ class Model:
             "width",
             "height",
         ])
+
+        scheduler = DPMSolverMultistepScheduler.from_config(self.model.scheduler.config)
+        self.model.scheduler = scheduler
+        
         self.available_schedulers = {v.__name__: v for v in self.model.scheduler.compatibles}
         self.current_scheduler = self.model.scheduler.__class__.__name__
 
