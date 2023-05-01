@@ -1,6 +1,4 @@
 import os
-current_file_path = os.path.abspath(__file__)
-current_file_directory = os.path.dirname(current_file_path)
 from .codeformer import setup_codeformer, codeformer_inference
 from app.jobs import BaseJob
 from app.logger import logger
@@ -20,7 +18,7 @@ class Model:
         self.upsampler, self.codeformer_net = setup_codeformer()
         self.model = DiffusionPipeline.from_pretrained(
             model_name_or_path,
-            cache_dir=os.path.join(current_file_directory, "model"),
+            cache_dir=os.path.join(os.getcwd(), "model"),
             custom_pipeline="lpw_stable_diffusion",
             torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
         ).to(device)
