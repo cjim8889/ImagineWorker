@@ -35,9 +35,6 @@ class Model:
             "height",
         ])
 
-        scheduler = DPMSolverMultistepScheduler.from_config(self.model.scheduler.config)
-        self.model.scheduler = scheduler
-        
         self.available_schedulers = {v.__name__: v for v in self.model.scheduler.compatibles}
         self.current_scheduler = self.model.scheduler.__class__.__name__
 
@@ -45,14 +42,15 @@ class Model:
         if scheduler_name == self.current_scheduler or scheduler_name is None:
             return
         
-        if scheduler_name not in self.available_schedulers:
-            logger.info(f"Error: {scheduler_name} is not a valid scheduler. Using {self.current_scheduler} instead")
-            return
-
         is_karras = False
         if "Karras" in scheduler_name:
             scheduler_name = scheduler_name.replace("Karras", "")
             is_karras = True
+            
+        if scheduler_name not in self.available_schedulers:
+            logger.info(f"Error: {scheduler_name} is not a valid scheduler. Using {self.current_scheduler} instead")
+            return
+
 
         self.model.scheduler = self.available_schedulers[scheduler_name].from_config(self.model.scheduler.config)
         if is_karras and hasattr(self.model.scheduler, "use_karras_sigmas"):
