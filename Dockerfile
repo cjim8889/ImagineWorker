@@ -16,12 +16,12 @@ RUN python -m pip install --upgrade pip && \
     pip install -r requirements.txt
 
 # Set the working directory
-WORKDIR /app/components/CodeFormer
+WORKDIR /app/app/components/CodeFormer
 
 RUN pip install -r requirements.txt && \
     python basicsr/setup.py develop
 
-WORKDIR /app
+WORKDIR /app/app
 
 RUN python setup.py
 
