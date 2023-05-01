@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
+ARG BASE_IMAGE=huggingface/transformers-pytorch-gpu:4.28.1
 FROM ${BASE_IMAGE} as dev-base
 
 SHELL ["/bin/bash", "-c"]
