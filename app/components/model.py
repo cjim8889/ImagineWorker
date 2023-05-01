@@ -55,11 +55,8 @@ class Model:
 
     def filter_allowed_model_params(self, params: dict) -> dict:
         if "seed" in params:
-            if torch.cuda.is_available():
-                params["seed"] = torch.cuda.manual_seed(params["seed"])
-            else:
-                params["seed"] = torch.manual_seed(params["seed"])
-                
+            params["seed"] = torch.cuda.manual_seed(params["seed"]) if torch.cuda.is_available() else torch.manual_seed(params["seed"])
+
         return {k: v for k, v in params.items() if k in self.allowed_model_params}
 
     def inference(self, job: BaseJob) -> Tuple[Image.Image, float]:
