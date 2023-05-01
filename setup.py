@@ -11,5 +11,6 @@ model.inference(
         job_id="startup",
         prompt="Startup idea:",
         face_restore=True,
+        num_inference_steps=1,
     )   
 )

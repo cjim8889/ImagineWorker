@@ -21,7 +21,7 @@ WORKDIR /app/app/components/CodeFormer
 RUN pip3 install -r requirements.txt && \
     python3 basicsr/setup.py develop
 
-WORKDIR /app/app
+WORKDIR /app
 
 RUN python3 setup.py
 
