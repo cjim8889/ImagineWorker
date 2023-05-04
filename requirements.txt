@@ -6,3 +6,4 @@ transformers
 pydantic==1.10.7
 diffusers[torch]
 colorlog
+runpod

@@ -1,6 +1,8 @@
 ARG BASE_IMAGE=huggingface/transformers-pytorch-gpu:4.28.1
 FROM ${BASE_IMAGE} as dev-base
 
+ARG MODEL_NAME=cjim8889/AllysMix3
+
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get install -y \
@@ -23,6 +25,7 @@ RUN pip3 install -r requirements.txt && \
 
 WORKDIR /app
 
+ENV MODEL_NAME=${MODEL_NAME}
 RUN python3 setup.py
 
 # Set the entry point

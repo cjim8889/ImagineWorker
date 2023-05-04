@@ -1,6 +1,7 @@
 from app.env import *
 from .dispatcher import Dispatcher
-from .base  import BaseJob, JobStatus
+from .base import BaseJob, JobStatus
+from .txt2img import TextToImageJob
 
 
 dispatcher = Dispatcher(
