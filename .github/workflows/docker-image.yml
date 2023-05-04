@@ -55,6 +55,7 @@ jobs:
       run: |
         TAG_NAME="$(echo ${{ matrix.model_name }} | tr '/' '-')"
         echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+        echo "REPO=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
         echo "Generated tag: $TAG_NAME"
     # Build and push to GHCR
     - name: Build and push to GHCR
@@ -64,7 +65,7 @@ jobs:
         push: true
         tags: |
           ${{ steps.ghcr_meta.outputs.tags }}
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG_NAME }}
+          ${{ env.REGISTRY }}/${{ env.REPO }} : ${{ env.TAG_NAME }}
         labels: ${{ steps.ghcr_meta.outputs.labels }}
         build-args: |
           MODEL_NAME=${{ matrix.model_name }}
