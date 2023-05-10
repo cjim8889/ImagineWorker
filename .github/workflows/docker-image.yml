@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        model_name: ['cjim8889/AllysMix3', 'XpucT/Deliberate', 'windwhinny/chilloutmix', 'zhg/rpg_v4', 'SG161222/Realistic_Vision_V2.0']
+        model_name: ['cjim8889/AllysMix3', 'Lykon/DreamShaper', 'XpucT/Deliberate', 'windwhinny/chilloutmix', 'zhg/rpg_v4', 'SG161222/Realistic_Vision_V2.0']
     steps:
     - name: Maximize build disk space
       uses: easimon/maximize-build-space@v7
