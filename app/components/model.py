@@ -11,7 +11,8 @@ import time
 import torch
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 class Model:
     def __init__(self, model_name_or_path: str) -> None:
@@ -21,36 +22,44 @@ class Model:
             cache_dir=os.path.join(os.getcwd(), "model"),
             custom_pipeline="lpw_stable_diffusion",
             torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+            safety_checker=None,
         ).to(device)
 
-        self.allowed_model_params = set([
-            "prompt",
-            "negative_prompt",
-            "num_inference_steps",
-            "guidance_scale",
-            "seed",
-            "width",
-            "height",
-        ])
+        self.allowed_model_params = set(
+            [
+                "prompt",
+                "negative_prompt",
+                "num_inference_steps",
+                "guidance_scale",
+                "seed",
+                "width",
+                "height",
+            ]
+        )
 
-        self.available_schedulers = {v.__name__: v for v in self.model.scheduler.compatibles}
+        self.available_schedulers = {
+            v.__name__: v for v in self.model.scheduler.compatibles
+        }
         self.current_scheduler = self.model.scheduler.__class__.__name__
 
     def switch_scheduler(self, scheduler_name):
         if scheduler_name == self.current_scheduler or scheduler_name is None:
             return
-        
+
         is_karras = False
         if "Karras" in scheduler_name:
             scheduler_name = scheduler_name.replace("Karras", "")
             is_karras = True
-            
+
         if scheduler_name not in self.available_schedulers:
-            logger.info(f"Error: {scheduler_name} is not a valid scheduler. Using {self.current_scheduler} instead")
+            logger.info(
+                f"Error: {scheduler_name} is not a valid scheduler. Using {self.current_scheduler} instead"
+            )
             return
 
-
-        self.model.scheduler = self.available_schedulers[scheduler_name].from_config(self.model.scheduler.config)
+        self.model.scheduler = self.available_schedulers[scheduler_name].from_config(
+            self.model.scheduler.config
+        )
         if is_karras and hasattr(self.model.scheduler, "use_karras_sigmas"):
             self.model.scheduler.use_karras_sigmas = True
 
@@ -59,7 +68,11 @@ class Model:
 
     def filter_allowed_model_params(self, params: dict) -> dict:
         if "seed" in params:
-            params["seed"] = torch.cuda.manual_seed(params["seed"]) if torch.cuda.is_available() else torch.manual_seed(params["seed"])
+            params["seed"] = (
+                torch.cuda.manual_seed(params["seed"])
+                if torch.cuda.is_available()
+                else torch.manual_seed(params["seed"])
+            )
 
         return {k: v for k, v in params.items() if k in self.allowed_model_params}
 
@@ -72,7 +85,7 @@ class Model:
         except Exception as e:
             logger.error(f"Error during inference for Job: {job.job_id}")
             raise e
-        
+
         elapsed_time = (time.time() - start_time) * 1000
         logger.info(f"Finished inference for Job: {job.job_id} in {elapsed_time:.2f}ms")
 
@@ -83,8 +96,10 @@ class Model:
             self.switch_scheduler(job.scheduler)
 
         filtered_kwargs = {k: v for k, v in job.dict().items() if v is not None}
-        logger.info(f"Running inference with kwargs: {filtered_kwargs} for Job: {job.job_id}")
-        
+        logger.info(
+            f"Running inference with kwargs: {filtered_kwargs} for Job: {job.job_id}"
+        )
+
         image = self.model(
             **self.filter_allowed_model_params(filtered_kwargs),
         ).images[0]
@@ -97,7 +112,9 @@ class Model:
                 background_enhance=True,
                 face_upsample=True,
                 upscale=4,
-                codeformer_fidelity=job.codeformer_fidelity if hasattr(job, "codeformer_fidelity") else 0.6,
+                codeformer_fidelity=job.codeformer_fidelity
+                if hasattr(job, "codeformer_fidelity")
+                else 0.6,
             )
 
         elif hasattr(job, "upsample") and job.upsample:
